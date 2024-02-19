@@ -1,4 +1,4 @@
-from random import randrange
+from random import randrange, choice
 
 class Movie():
     def __init__(self, title, created_date, genre, play_count):
@@ -39,13 +39,15 @@ class Series(Movie):
 def schedule():
     movies_list = []
 
-    for i in range(1):
-        movie = Movie(title='Superman', created_date='2024', genre='horror', play_count=200)
-        movies_list.append(movie)
+    movie_1 = Movie(title='Superman', created_date='2024', genre='horror', play_count=300)
+    movie_2 = Movie(title='Flash', created_date='2024', genre='horror', play_count=50)
+    movie_3 = Movie(title='Hulk', created_date='2024', genre='horror', play_count=100)
+    movies_list.extend([movie_1, movie_2, movie_3])
 
-    for i in range(1):
-        series = Series(title='Batman', created_date='2019', genre='horror', play_count=200, nr_episode='E06', nr_sezon='S01')
-        movies_list.append(series)
+    series_1 = Series(title='Batman', created_date='2019', genre='horror', play_count=400, nr_episode='E06', nr_sezon='S01')
+    series_2 = Series(title='Spiderman', created_date='2019', genre='horror', play_count=250, nr_episode='E06', nr_sezon='S01')
+    series_3 = Series(title='IronMan', created_date='2019', genre='horror', play_count=350, nr_episode='E06', nr_sezon='S01')
+    movies_list.extend([series_1, series_2, series_3])
     
     return movies_list
 
@@ -58,28 +60,74 @@ def get_series(schedule_list):
 def search(schedule_list, get_title):
     return [movie for movie in schedule_list if movie.title == get_title]
 
+def get_title():
+    get_title = input("Wpisz tytul: ")
+    get_title = get_title.capitalize()
+    search_result = search(schedule_list, get_title)
+
+    for result in search_result:
+        print(result)
+
 def generate_views(schedule_list):
-    rand = randrange(0, 101, 2)
-    movie.play_count = rand
-    return movie.play_count
+    rand = randrange(0, 101, 1)
+    item = choice(schedule_list)
+
+    if isinstance(item, Movie):
+        item.play_count = rand
+    elif isinstance(item, Series):
+        item.play_count = rand
+
+    return item.play_count
+
+def generate_views_10x():
+    schedule_list_rand = []
+    for i in range(10):
+        rand_item = generate_views(schedule_list)
+        schedule_list_rand.append(rand_item)
+
+    return schedule_list_rand
+
+def top_titles(n, content_type):
+    top_titles_list = schedule()
+
+    if content_type.lower() == 'films':
+        top_titles_list = [item for item in top_titles_list if isinstance(item, Movie)]
+    elif content_type.lower() == 'series':
+        top_titles_list = [item for item in top_titles_list if isinstance(item, Series)]
+    else:
+        print("Nieprawidlowy wybor. Napisz 'films' albo 'series'")
+        return []
+    
+    top_titles_list.sort(key=lambda movie : movie.play_count, reverse=True)
+    
+    return top_titles_list[:n]
 
 schedule_list = schedule()
 schedule_list.sort(key=lambda a : a.title)
+
 movies = get_movies(schedule_list)
 print("Movies: ")
 for movie in movies:
     print(movie.panel())
 
 series = get_series(schedule_list)
-print("Series: ")
+print("\nSeries: ")
 for serie in series:
     print(serie.panel())
 
-get_title = input("Wpisz tytul: ")
-get_title = get_title.capitalize()
-search_result = search(schedule_list, get_title)
 
-for result in search_result:
-    print(result)
+search(schedule_list, get_title())
+generate_views_10x()
 
-print(generate_views(schedule_list))
+
+content_type = input("Co chcesz zobaczyc top filmy czy top seriale? ")
+n = int(input("Ile topowych filmow chcesz zobaczyc? "))
+top_movies = top_titles(n, 'films')
+print(f"\nTop {n}")
+for top_m in top_movies:
+    print(top_m.panel())
+
+top_series = top_titles(n, 'series')
+print(f"\nTop {n}")
+for top_s in top_movies:
+    print(top_s.panel())
