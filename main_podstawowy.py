@@ -35,6 +35,7 @@ class Series(Movie):
         result += f"{self.nr_sezon} {self.nr_episode}\n"
         result += "--------------------------"
         return result
+    
 
 def schedule():
     movies_list = []
@@ -71,7 +72,7 @@ def get_title():
 def generate_views(schedule_list):
     rand = randrange(0, 101, 1)
     item = choice(schedule_list)
-
+  
     if isinstance(item, Movie):
         item.play_count = rand
     elif isinstance(item, Series):
@@ -90,14 +91,14 @@ def generate_views_10x():
 def top_titles(n, content_type):
     top_titles_list = schedule()
 
-    if content_type.lower() == 'films':
+    if content_type.lower() == 'filmy':
         top_titles_list = [item for item in top_titles_list if isinstance(item, Movie)]
-    elif content_type.lower() == 'series':
+    elif content_type.lower() == 'seriale':
         top_titles_list = [item for item in top_titles_list if isinstance(item, Series)]
     else:
-        print("Nieprawidlowy wybor. Napisz 'films' albo 'series'")
+        print("Nieprawidlowy wybor. Napisz 'filmy' albo 'seriale'")
         return []
-    
+
     top_titles_list.sort(key=lambda movie : movie.play_count, reverse=True)
     
     return top_titles_list[:n]
@@ -105,6 +106,7 @@ def top_titles(n, content_type):
 schedule_list = schedule()
 schedule_list.sort(key=lambda a : a.title)
 
+print("Biblioteka filmów")
 movies = get_movies(schedule_list)
 print("Movies: ")
 for movie in movies:
@@ -116,18 +118,22 @@ for serie in series:
     print(serie.panel())
 
 
-search(schedule_list, get_title())
 generate_views_10x()
+search(schedule_list, get_title())
 
 
-content_type = input("Co chcesz zobaczyc top filmy czy top seriale? ")
-n = int(input("Ile topowych filmow chcesz zobaczyc? "))
-top_movies = top_titles(n, 'films')
-print(f"\nTop {n}")
-for top_m in top_movies:
-    print(top_m.panel())
+content_type = input("Co chcesz zobaczyc top filmy czy top seriale? ").lower()
+n = int(input("Ile topowych pozycji chcesz zobaczyc? "))
 
-top_series = top_titles(n, 'series')
-print(f"\nTop {n}")
-for top_s in top_movies:
-    print(top_s.panel())
+if content_type == 'filmy':
+    top_movies = top_titles(n, 'filmy')
+    print(f"\nTop {n} filmy:")
+    for movie in top_movies:
+        print(movie.panel())
+elif content_type == 'seriale':
+    top_series = top_titles(n, 'seriale')
+    print(f"\nTop {n} seriale:")
+    for serie in top_series:
+        print(serie.panel())
+else:
+    print("Nieprawidlowy wybor. Napisz 'filmy' albo 'seriale'")
